@@ -10,7 +10,7 @@
         some mobile platforms, specifically Custom Tabs on Android and
         SFSafariViewController on iOS.
     </description>
-    <dependency id="cordova-plugin-compat" version="^1.0.0" />
+    <dependency id="cordova-plugin-compat" version="1.2.0" />
 
     <js-module name="BrowserTab" src="www/browsertab.js">
         <clobbers target="cordova.plugins.browsertab" />
