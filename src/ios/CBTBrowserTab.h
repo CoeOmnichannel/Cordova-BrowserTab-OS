@@ -16,6 +16,7 @@
 
 #import <Cordova/CDVPlugin.h>
 #import <SafariServices/SafariServices.h>
+#import <AuthenticationServices/ASWebAuthenticationSession.h>
 
 @interface CBTBrowserTab : CDVPlugin
 
