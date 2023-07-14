@@ -37,27 +37,21 @@ ASWebAuthenticationSession *_asAuthenticationVC;
 }
 
 - (void)openUrl:(CDVInvokedUrlCommand *)command {
-  NSString *urlString = command.arguments[0];
-
-  bool forSession = command.arguments[1];
+    
+  NSURL* requestURL = [NSURL URLWithString:[command.arguments objectAtIndex:0]];
+    
+  BOOL forSession = [[command.arguments objectAtIndex:1] boolValue];
   
-  if (urlString == nil) {
+  if (requestURL == nil) {
     CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
                                                 messageAsString:@"url can't be empty"];
     [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
     return;
   }
 
-  if ([SFSafariViewController class] != nil) {
-    NSString *errorMessage = @"in app browser tab not available";
-    CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
-                                                messageAsString:errorMessage];
-    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
-  }
-
-
   if(forSession) {
     if (@available(iOS 12.0, *)) {
+           
            NSString* redirectScheme =  command.arguments[2];
 
 
@@ -69,7 +63,7 @@ ASWebAuthenticationSession *_asAuthenticationVC;
           }
 
            ASWebAuthenticationSession* authenticationVC =
-           [[ASWebAuthenticationSession alloc] initWithURL:urlString
+           [[ASWebAuthenticationSession alloc] initWithURL:requestURL
                                       callbackURLScheme: [[NSURL URLWithString: redirectScheme] scheme]
                                       completionHandler:^(NSURL * _Nullable callbackURL,
                                                           NSError * _Nullable error) {
@@ -100,7 +94,8 @@ ASWebAuthenticationSession *_asAuthenticationVC;
        }
 
   } else {
-    _safariViewController = [[SFSafariViewController alloc] initWithURL:url];
+      
+    _safariViewController = [[SFSafariViewController alloc] initWithURL:requestURL];
     [self.viewController presentViewController:_safariViewController animated:YES completion:nil];
   }
 
