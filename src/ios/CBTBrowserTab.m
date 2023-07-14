@@ -38,6 +38,9 @@ ASWebAuthenticationSession *_asAuthenticationVC;
 
 - (void)openUrl:(CDVInvokedUrlCommand *)command {
   NSString *urlString = command.arguments[0];
+
+  bool forSession = command.arguments[1];
+  
   if (urlString == nil) {
     CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
                                                 messageAsString:@"url can't be empty"];
@@ -52,17 +55,21 @@ ASWebAuthenticationSession *_asAuthenticationVC;
     [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
   }
 
-  /*_safariViewController = [[SFSafariViewController alloc] initWithURL:url];
-  [self.viewController presentViewController:_safariViewController animated:YES completion:nil];
-    */
-    
 
+  if(forSession) {
     if (@available(iOS 12.0, *)) {
-          NSString* redirectScheme =  @"exampleauth";
-           NSURL* requestURL = [NSURL URLWithString:[command.arguments objectAtIndex:0]];
+           NSString* redirectScheme =  command.arguments[2];
+
+
+          if (redirectScheme == nil) {
+            CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                                        messageAsString:@"urlScheme can't be empty"];
+            [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+            return;
+          }
 
            ASWebAuthenticationSession* authenticationVC =
-           [[ASWebAuthenticationSession alloc] initWithURL:requestURL
+           [[ASWebAuthenticationSession alloc] initWithURL:urlString
                                       callbackURLScheme: [[NSURL URLWithString: redirectScheme] scheme]
                                       completionHandler:^(NSURL * _Nullable callbackURL,
                                                           NSError * _Nullable error) {
@@ -91,16 +98,12 @@ ASWebAuthenticationSession *_asAuthenticationVC;
                [self appIsActive];
            }
        }
-    
-/*
-    // Initialize the session.
-    let session = ASWebAuthenticationSession(url: authURL, callbackURLScheme: scheme)
-    { callbackURL, error in
-        // Handle the callback.
-    }
-*/
-//  CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-//  [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+
+  } else {
+    _safariViewController = [[SFSafariViewController alloc] initWithURL:url];
+    [self.viewController presentViewController:_safariViewController animated:YES completion:nil];
+  }
+
 }
 
 - (nonnull ASPresentationAnchor)presentationAnchorForWebAuthenticationSession:(nonnull ASWebAuthenticationSession *)session API_AVAILABLE(ios(13.0)){
