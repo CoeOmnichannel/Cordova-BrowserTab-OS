@@ -69,7 +69,7 @@ ASWebAuthenticationSession *_asAuthenticationVC;
                                                           NSError * _Nullable error) {
                                           CDVPluginResult *result;
 
-                                          if(error != nil) {
+                                          if(error == nil) {
                                               if (callbackURL) {
                                                   result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: callbackURL.absoluteString];
                                                   [[UIApplication sharedApplication] openURL:callbackURL options: @{} completionHandler: nil];
