@@ -70,6 +70,7 @@ ASWebAuthenticationSession *_asAuthenticationVC;
                                           CDVPluginResult *result;
                                           if (callbackURL) {
                                               result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: callbackURL.absoluteString];
+                                              [[UIApplication sharedApplication] openURL:callbackURL options: @{} completionHandler: nil];
 
                                           } else {
                                               result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"error"];
