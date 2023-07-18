@@ -76,8 +76,13 @@ ASWebAuthenticationSession *_asAuthenticationVC;
                                               } else {
                                                   result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"ERROR_CANCELED_BY_USER"];
                                               }
-                                          } else {                                          
-                                              result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error.description];
+                                          } else {
+                                              if(error.code == 1) {
+                                                  result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"ERROR_CANCELED_BY_USER"];
+                                              } else {
+                                                  result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error.description];
+                                              }
+
                                           }
 
                                           [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
