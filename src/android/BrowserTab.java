@@ -95,46 +95,12 @@ public class BrowserTab extends CordovaPlugin {
       return;
     }
 
-    String customTabsBrowser = findCustomTabBrowser();
-    if (customTabsBrowser == null) {
-      Log.d(LOG_TAG, "openUrl: no in app browser tab available");
-      callbackContext.error("no in app browser tab implementation available");
-    }
-
     Intent customTabsIntent = new CustomTabsIntent.Builder().build().intent;
     customTabsIntent.setData(Uri.parse(urlStr));
-    customTabsIntent.setPackage(mCustomTabsBrowser);
     cordova.getActivity().startActivity(customTabsIntent);
 
     Log.d(LOG_TAG, "in app browser call dispatched");
     callbackContext.success();
-  }
-
-  private String findCustomTabBrowser() {
-    if (mFindCalled) {
-      return mCustomTabsBrowser;
-    }
-
-    PackageManager pm = cordova.getActivity().getPackageManager();
-    Intent webIntent = new Intent(
-        Intent.ACTION_VIEW,
-        Uri.parse("http://www.example.com"));
-    List<ResolveInfo> resolvedActivityList =
-        pm.queryIntentActivities(webIntent, PackageManager.GET_RESOLVED_FILTER);
-
-    for (ResolveInfo info : resolvedActivityList) {
-      if (!isFullBrowser(info)) {
-        continue;
-      }
-
-      if (hasCustomTabWarmupService(pm, info.activityInfo.packageName)) {
-        mCustomTabsBrowser = info.activityInfo.packageName;
-        break;
-      }
-    }
-
-    mFindCalled = true;
-    return mCustomTabsBrowser;
   }
 
   private boolean isFullBrowser(ResolveInfo resolveInfo) {
