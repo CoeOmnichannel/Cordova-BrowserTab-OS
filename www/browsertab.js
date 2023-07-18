@@ -18,14 +18,14 @@ exports.isAvailable = function(success, error) {
   exec(success, error, 'BrowserTab', 'isAvailable', []);
 };
 
-exports.openUrl = function(url, opt_error) {
+exports.openUrl = function(url, opt_error, forSession, schemeUrl) {
   var doNothing = function() {};
   var error = (!opt_error) ? doNothing : opt_error;
-  exec(doNothing, error, 'BrowserTab', 'openUrl', [url]);
+  exec(doNothing, error, 'BrowserTab', 'openUrl', [url, forSession, schemeUrl]);
 };
 
-exports.close = function(opt_error) {
+exports.close = function(opt_error, forSession, schemeUrl) {
   var doNothing = function() {};
   var error = (!opt_error) ? doNothing : opt_error;
-  exec(doNothing, error, 'BrowserTab', 'close', []);
+  exec(doNothing, error, 'BrowserTab', 'close', [forSession, schemeUrl]);
 };
