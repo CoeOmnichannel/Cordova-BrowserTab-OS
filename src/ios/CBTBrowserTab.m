@@ -68,12 +68,16 @@ ASWebAuthenticationSession *_asAuthenticationVC;
                                       completionHandler:^(NSURL * _Nullable callbackURL,
                                                           NSError * _Nullable error) {
                                           CDVPluginResult *result;
-                                          if (callbackURL) {
-                                              result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: callbackURL.absoluteString];
-                                              [[UIApplication sharedApplication] openURL:callbackURL options: @{} completionHandler: nil];
 
-                                          } else {
-                                              result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"error"];
+                                          if(error != nil) {
+                                              if (callbackURL) {
+                                                  result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: callbackURL.absoluteString];
+                                                  [[UIApplication sharedApplication] openURL:callbackURL options: @{} completionHandler: nil];
+                                              } else {
+                                                  result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"ERROR_CANCELED_BY_USER"];
+                                              }
+                                          } else {                                          
+                                              result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error.description];
                                           }
 
                                           [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
