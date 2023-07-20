@@ -29,3 +29,8 @@ exports.close = function(opt_error, forSession, schemeUrl) {
   var error = (!opt_error) ? doNothing : opt_error;
   exec(doNothing, error, 'BrowserTab', 'close', [forSession, schemeUrl]);
 };
+
+exports.getVersion = function() {
+  let md = cordova.require("cordova/plugin_list").metadata
+  return md["cordova-plugin-browsertab"] || "-1";
+};
