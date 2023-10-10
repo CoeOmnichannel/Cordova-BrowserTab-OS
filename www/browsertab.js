@@ -24,6 +24,10 @@ exports.openUrl = function(url, opt_error, forSession, schemeUrl) {
   exec(doNothing, error, 'BrowserTab', 'openUrl', [url, forSession, schemeUrl]);
 };
 
+exports.isCustomTabsSupported = function(success, error) {
+    exec(success, error, 'BrowserTab', 'isCustomTabsSupported', []);
+}
+
 exports.close = function(opt_error, forSession, schemeUrl) {
   var doNothing = function() {};
   var error = (!opt_error) ? doNothing : opt_error;
