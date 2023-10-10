@@ -19,6 +19,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.support.customtabs.CustomTabsIntent;
+import android.support.customtabs.CustomTabsClient;
 import android.util.Log;
 
 import java.util.Iterator;
@@ -61,6 +62,8 @@ public class BrowserTab extends CordovaPlugin {
       isAvailable(callbackContext);
     } else if ("openUrl".equals(action)) {
       openUrl(args, callbackContext);
+    }else if ("isCustomTabsSupported".equals(action)) {
+            isCustomTabsSupported(callbackContext);
     } else if ("close".equals(action)) {
       // close is a NOP on Android
       return true;
@@ -74,6 +77,15 @@ public class BrowserTab extends CordovaPlugin {
   private void isAvailable(CallbackContext callbackContext) {
     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, true));
   }
+
+  private void isCustomTabsSupported(CallbackContext callbackContext) {
+        String packageName = CustomTabsClient.getPackageName(
+                cordova.getActivity(),
+                Collections.emptyList()
+        );
+        boolean customTabsSupported = (packageName != null);
+        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, customTabsSupported));
+    }
 
   private void openUrl(JSONArray args, CallbackContext callbackContext) {
     if (args.length() < 1) {
