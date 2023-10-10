@@ -80,13 +80,22 @@ public class BrowserTab extends CordovaPlugin {
   }
 
   private void isCustomTabsSupported(CallbackContext callbackContext) {
-        String packageName = CustomTabsClient.getPackageName(
-                cordova.getActivity(),
-                Collections.emptyList()
-        );
-        boolean customTabsSupported = (packageName != null);
-        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, customTabsSupported));
+    List<String> packages = CustomTabsClient.getPackageName(
+            cordova.getActivity(),
+            Collections.emptyList()
+    );
+
+    if (packages != null && !packages.isEmpty()) {
+        for (String packageName : packages) {
+            System.out.println("Navegador compatível encontrado: " + packageName);
+        }
+    } else {
+        System.out.println("Nenhum navegador compatível encontrado");
     }
+
+    boolean customTabsSupported = (packages != null && !packages.isEmpty());
+    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, customTabsSupported));
+  }
 
   private void openUrl(JSONArray args, CallbackContext callbackContext) {
     if (args.length() < 1) {
