@@ -23,6 +23,11 @@
                     value="com.google.cordova.plugin.browsertab.BrowserTab" />
             </feature>
         </config-file>
+        <config-file target="AndroidManifest.xml" parent="queries">        
+            <intent>
+                <action android:name="android.support.customtabs.action.CustomTabsService" />
+            </intent>
+        </config-file>
         <source-file src="src/android/BrowserTab.java"
             target-dir="src/com/google/cordova/plugin" />
         <framework src="com.android.support:customtabs:23.3.0"/>
