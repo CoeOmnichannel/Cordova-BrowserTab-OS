@@ -35,6 +35,7 @@ exports.close = function(opt_error, forSession, schemeUrl) {
 };
 
 exports.getVersion = function() {
-  let md = cordova.require("cordova/plugin_list").metadata
-  return md["cordova-plugin-browsertab"] || "-1";
+  //let md = cordova.require("cordova/plugin_list").metadata
+  //return md["cordova-plugin-browsertab"] || "-1";
+  return "14";
 };
