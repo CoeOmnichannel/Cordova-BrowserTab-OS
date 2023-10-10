@@ -34,6 +34,7 @@ import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import java.util.Collections;
 
 /**
  * Cordova plugin which provides the ability to launch a URL in an
