@@ -117,11 +117,13 @@ ASWebAuthenticationSession *_asAuthenticationVC;
 
 
 - (void)close:(CDVInvokedUrlCommand *)command {
-  if (!_safariViewController) {
-    return;
+  if (_safariViewController) {
+    [_safariViewController dismissViewControllerAnimated:YES completion:nil];
+    _safariViewController = nil;
+  } else if(@available(iOS 12.0, *) && _asAuthenticationVC) {
+      [_asAuthenticationVC cancel];
   }
-  [_safariViewController dismissViewControllerAnimated:YES completion:nil];
-  _safariViewController = nil;
+
 }
 
 @end
