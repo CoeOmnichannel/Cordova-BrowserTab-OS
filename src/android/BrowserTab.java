@@ -102,6 +102,12 @@
              Collections.emptyList()
      );
  
+     Intent intent = new Intent(Settings.ACTION_MANAGE_DEFAULT_APPS_SETTINGS);
+     intent.putExtra(
+             SETTINGS_SELECT_OPTION_KEY,
+             DEFAULT_BROWSER_APP_OPTION
+     );
+
      boolean customTabsSupported = (packages != null);
      callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, customTabsSupported));
    }
@@ -126,7 +132,8 @@
  
      Intent customTabsIntent = new CustomTabsIntent.Builder().build().intent;
      customTabsIntent.setData(Uri.parse(urlStr));
-     
+
+
      if("true".equals(forceChrome)) {
       customTabsIntent.setPackage("com.android.chrome");
      }
