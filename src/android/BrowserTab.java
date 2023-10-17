@@ -66,6 +66,20 @@
      Log.d(LOG_TAG, "executing " + action);
      if ("isAvailable".equals(action)) {
        isAvailable(callbackContext);
+     } else if ("isBrowserAppAvailable".equals(action)) {
+      try {
+          isPackageInstalled(args.getString(0), callbackContext);
+      } catch (JSONException e) {
+          Log.d(LOG_TAG, "openUrl: failed to parse url argument");
+          callbackContext.error("URL argument is not a string");
+      }
+     } else if ("openAppStore".equals(action)) {
+      try {
+          openAppStore(args.getString(0), args.getString(1));
+      } catch (JSONException e) {
+          Log.d(LOG_TAG, "openAppStore: failed to parse url argument");
+          callbackContext.error("URL argument is not a string");
+      }
      } else if ("openUrl".equals(action)) {
        openUrl(args, callbackContext);
      }else // close is a NOP on Android
@@ -93,24 +107,7 @@
              SETTINGS_SELECT_OPTION_KEY,
              DEFAULT_BROWSER_APP_OPTION
      );
-     Bundle bundle = new Bundle();
-     bundle.putString(SETTINGS_SELECT_OPTION_KEY, DEFAULT_BROWSER_APP_OPTION);
-     intent.putExtra(
-             SETTINGS_SHOW_FRAGMENT_ARGS,
-             bundle
-     );
-     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-     cordova.getActivity().startActivity(intent);
- 
-     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-    /*   RoleManager roleManager = (RoleManager) getSystemService(ROLE_SERVICE);
-       Intent intent = roleManager.createRequestRoleIntent(RoleManager.ROLE_BROWSER);
-       resultLauncher.launch(intent);*/
-     } else {
- 
-     }
- 
- 
+
      boolean customTabsSupported = (packages != null);
      callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, customTabsSupported));
    }
@@ -123,8 +120,10 @@
      }
  
      String urlStr;
+     String forceChrome;
      try {
        urlStr = args.getString(0);
+       forceChrome = args.getString(3);
      } catch (JSONException e) {
        Log.d(LOG_TAG, "openUrl: failed to parse url argument");
        callbackContext.error("URL argument is not a string");
@@ -133,14 +132,18 @@
  
      Intent customTabsIntent = new CustomTabsIntent.Builder().build().intent;
      customTabsIntent.setData(Uri.parse(urlStr));
-     //cordova.getActivity().startActivity(customTabsIntent);
+
+
+     if("true".equals(forceChrome)) {
+      customTabsIntent.setPackage("com.android.chrome");
+     }
  
      try {
        cordova.startActivityForResult(new CordovaPlugin() {
          @Override
          public void onActivityResult(int requestCode, int resultCode, Intent intent) {
            if (resultCode !=  Activity.RESULT_OK) {
-             callbackContext.error("ERROR_CANCELED_BY_USER");
+             callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, "ERROR_CANCELED_BY_USER"));
            } else {
              callbackContext.success();
            }
@@ -148,9 +151,30 @@
        }, customTabsIntent, -20231016);
      } catch (ActivityNotFoundException e) {
        LOG.w("No activity found to handle file chooser intent.", e);
-       callbackContext.error("No activity found to handle the intent.");
+       callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, "No activity found to handle the intent."));
      }
    }
+ 
+   private void isPackageInstalled(String packageName, CallbackContext callbackContext)  {
+      try {
+          callbackContext.sendPluginResult(new PluginResult(
+                  PluginResult.Status.OK,
+                  this.cordova.getContext().getPackageManager()
+                          .getApplicationInfo(packageName, 0).enabled)
+          );
+      } catch (PackageManager.NameNotFoundException e) {
+          callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, false));
+      }
+  }
+
+  private void openAppStore(String packageName, String extraParams)  {
+      try {
+          packageName += "&" + extraParams;
+          cordova.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + packageName)));
+      } catch (android.content.ActivityNotFoundException anfe) {
+          cordova.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + packageName)));
+      }
+  }
  
    private boolean isFullBrowser(ResolveInfo resolveInfo) {
      // The filter must match ACTION_VIEW, CATEGORY_BROWSEABLE, and at least one scheme,
