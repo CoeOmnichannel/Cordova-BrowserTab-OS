@@ -18,14 +18,32 @@ exports.isAvailable = function(success, error) {
   exec(success, error, 'BrowserTab', 'isAvailable', []);
 };
 
-exports.openUrl = function(url, opt_error, forSession, schemeUrl) {
+exports.openUrl = function(url, opt_error, forSession, schemeUrl, androidForceChrome) {
   var doNothing = function() {};
   var error = (!opt_error) ? doNothing : opt_error;
-  exec(doNothing, error, 'BrowserTab', 'openUrl', [url, forSession, schemeUrl]);
+  exec(doNothing, error, 'BrowserTab', 'openUrl', [url, forSession, schemeUrl, androidForceChrome]);
 };
 
 exports.isCustomTabsSupported = function(success, error) {
     exec(success, error, 'BrowserTab', 'isCustomTabsSupported', []);
+}
+
+exports.isBrowserAppAvailable = function(success, error, browserPackage) {
+
+  if(cordova.platformId === "iOS") {
+    success(true);
+  } else {
+    exec(success, error, 'BrowserTab', 'isBrowserAppAvailable', [browserPackage]);
+  }
+}
+
+exports.openAppStore = function(success, error, browserPackage, extraParams) {
+
+  if(cordova.platformId === "iOS") {
+    success(true);
+  } else {
+    exec(success, error, 'BrowserTab', 'openAppStore', [browserPackage, extraParams ? extraParams : ""]);
+  }
 }
 
 exports.close = function(opt_error, forSession, schemeUrl) {
