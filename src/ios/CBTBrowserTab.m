@@ -74,11 +74,11 @@ ASWebAuthenticationSession *_asAuthenticationVC;
                                                   result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString: callbackURL.absoluteString];
                                                   [[UIApplication sharedApplication] openURL:callbackURL options: @{} completionHandler: nil];
                                               } else {
-                                                  result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"ERROR_CANCELED_BY_USER"];
+                                                  result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"CLOSED_WINDOW"];
                                               }
                                           } else {
                                               if(error.code == 1) {
-                                                  result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"ERROR_CANCELED_BY_USER"];
+                                                  result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"CLOSED_WINDOW"];
                                               } else {
                                                   result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error.description];
                                               }
