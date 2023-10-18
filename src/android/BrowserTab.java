@@ -15,21 +15,19 @@
  package com.google.cordova.plugin.browsertab;
 
  import android.app.Activity;
- import android.app.role.RoleManager;
  import android.content.ActivityNotFoundException;
  import android.content.Intent;
  import android.content.pm.PackageManager;
  import android.content.pm.ResolveInfo;
  import android.net.Uri;
- import android.os.Build;
  import android.os.Bundle;
+ import android.provider.Browser;
  import android.provider.Settings;
  import android.util.Log;
- import android.webkit.WebChromeClient;
- 
+
  import androidx.browser.customtabs.CustomTabsClient;
  import androidx.browser.customtabs.CustomTabsIntent;
- 
+
  import org.apache.cordova.CallbackContext;
  import org.apache.cordova.CordovaPlugin;
  import org.apache.cordova.LOG;
@@ -56,10 +54,9 @@
     */
    private static final String ACTION_CUSTOM_TABS_CONNECTION =
            "android.support.customtabs.action.CustomTabsService";
- 
-   private static final String SETTINGS_SELECT_OPTION_KEY = ":settings:fragment_args_key";
-   private static final String SETTINGS_SHOW_FRAGMENT_ARGS = ":settings:show_fragment_args";
-   private static final String DEFAULT_BROWSER_APP_OPTION = "default_browser";
+
+     public final int OPEN_BROWSER = 1123332;
+     private CallbackContext callback = null;
  
    @Override
    public boolean execute(String action, JSONArray args, CallbackContext callbackContext) {
@@ -101,12 +98,6 @@
              cordova.getActivity(),
              Collections.emptyList()
      );
- 
-     Intent intent = new Intent(Settings.ACTION_MANAGE_DEFAULT_APPS_SETTINGS);
-     intent.putExtra(
-             SETTINGS_SELECT_OPTION_KEY,
-             DEFAULT_BROWSER_APP_OPTION
-     );
 
      boolean customTabsSupported = (packages != null);
      callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, customTabsSupported));
@@ -129,32 +120,34 @@
        callbackContext.error("URL argument is not a string");
        return;
      }
- 
+
+     callback = callbackContext;
+
      Intent customTabsIntent = new CustomTabsIntent.Builder().build().intent;
      customTabsIntent.setData(Uri.parse(urlStr));
-
 
      if("true".equals(forceChrome)) {
       customTabsIntent.setPackage("com.android.chrome");
      }
- 
+
+
      try {
-       cordova.startActivityForResult(new CordovaPlugin() {
-         @Override
-         public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-           if (resultCode !=  Activity.RESULT_OK) {
-             callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, "ERROR_CANCELED_BY_USER"));
-           } else {
-             callbackContext.success();
-           }
-         }
-       }, customTabsIntent, -20231016);
+        cordova.setActivityResultCallback (this);
+        cordova.startActivityForResult(this, customTabsIntent, OPEN_BROWSER);
      } catch (ActivityNotFoundException e) {
-       LOG.w("No activity found to handle file chooser intent.", e);
-       callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, "No activity found to handle the intent."));
+        LOG.w("No activity found to handle file chooser intent.", e);
+        callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, "No activity found to handle the intent."));
      }
+
    }
- 
+
+   @Override
+   public void onResume(boolean multitask) {
+      PluginResult result = new PluginResult(PluginResult.Status.ERROR, "CLOSED_WINDOW" );
+      result.setKeepCallback(true);
+      callback.sendPluginResult(result);
+   }
+
    private void isPackageInstalled(String packageName, CallbackContext callbackContext)  {
       try {
           callbackContext.sendPluginResult(new PluginResult(
