@@ -151,14 +151,15 @@
    }
 
    private void isPackageInstalled(String packageName, CallbackContext callbackContext)  {
-      try {
+        try {
+
+          boolean isEnabled = this.cordova.getContext().getPackageManager()
+                  .getApplicationInfo(packageName, 0).enabled;
           callbackContext.sendPluginResult(new PluginResult(
-                  PluginResult.Status.OK,
-                  this.cordova.getContext().getPackageManager()
-                          .getApplicationInfo(packageName, 0).enabled)
+                  PluginResult.Status.OK, isEnabled ? "1" : "0")
           );
       } catch (PackageManager.NameNotFoundException e) {
-          callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, false));
+          callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, "-1"));
       }
   }
 
