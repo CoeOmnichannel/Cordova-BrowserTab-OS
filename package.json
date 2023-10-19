@@ -1,6 +1,6 @@
 {
     "name": "cordova-plugin-browsertab",
-    "version": "0.2.23",
+    "version": "0.2.25",
     "description": "In-app browser tabs for Android and iOS",
     "cordova": {
         "id": "cordova-plugin-browsertab",
