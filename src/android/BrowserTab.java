@@ -143,9 +143,11 @@
 
    @Override
    public void onResume(boolean multitask) {
-      PluginResult result = new PluginResult(PluginResult.Status.ERROR, "CLOSED_WINDOW" );
-      result.setKeepCallback(true);
-      callback.sendPluginResult(result);
+      if(callback != null) {
+             PluginResult result = new PluginResult(PluginResult.Status.ERROR, "CLOSED_WINDOW" );
+             result.setKeepCallback(true);
+             callback.sendPluginResult(result);
+      }
    }
 
    private void isPackageInstalled(String packageName, CallbackContext callbackContext)  {
