@@ -1,8 +1,8 @@
-def minSdkVersion = 26
+def minSdkVersion = 34
 
 ext {
-    compileSdkVersion = 26
-    buildToolsVersion = '26.0.2'
+    compileSdkVersion = 34
+    buildToolsVersion = '34.0.0'
 
  }
 
