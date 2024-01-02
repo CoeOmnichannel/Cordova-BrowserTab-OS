@@ -11,22 +11,13 @@
         SFSafariViewController on iOS.
     </description>
      <!--<dependency id="cordova-plugin-compat" version="1.2.0" />  -->
-
-    
-
+ 
     <js-module name="BrowserTab" src="www/browsertab.js">
         <clobbers target="cordova.plugins.browsertab" />
     </js-module>
-
-   
-
-
+ 
     <platform name="android">
-
-         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
-            <application android:appComponentFactory="androidx.core.app.CoreComponentFactory" xmlns:android="http://schemas.android.com/apk/res/android" android:tools:replace="android:appComponentFactory" />
-        </edit-config>
-        
+ 
         <config-file parent="/*" target="res/xml/config.xml">
             <feature name="BrowserTab">
                 <param name="android-package"
