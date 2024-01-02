@@ -10,7 +10,7 @@
         some mobile platforms, specifically Custom Tabs on Android and
         SFSafariViewController on iOS.
     </description>
-     <dependency id="cordova-plugin-compat" version="1.2.0" />  
+     <!--<dependency id="cordova-plugin-compat" version="1.2.0" />  -->
 
     
 
@@ -23,7 +23,9 @@
 
     <platform name="android">
 
-        
+         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
+            <application android:appComponentFactory="androidx.core.app.CoreComponentFactory" xmlns:android="http://schemas.android.com/apk/res/android" android:tools:replace="android:appComponentFactory" />
+        </edit-config>
         
         <config-file parent="/*" target="res/xml/config.xml">
             <feature name="BrowserTab">
@@ -37,7 +39,7 @@
             </intent>
         </config-file>
         <source-file src="src/android/BrowserTab.java"
-            target-dir="src/com/google/cordova/plugin/browsertab" />
+            target-dir="src/com/google/cordova/plugin" />
         <framework src="com.android.support:customtabs:23.3.0"/>
       <!--  <framework src="src/android/BrowserTab.gradle" custom="true" type="gradleReference"/> -->
     </platform>
